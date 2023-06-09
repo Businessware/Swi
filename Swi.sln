@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{252CB774-213F-4E70-A275-C41FC286EDC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swi32.Interop", "Source\Swi32.Interop\Swi32.Interop.csproj", "{1F249B60-FA60-4E0F-9352-9512F8CB5F0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swi32.Codec", "Source\Swi32.Codec\Swi32.Codec.csproj", "{51314BCF-C1E1-44D3-8D82-C80638F45A9E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{31A02DDA-1DDA-48E8-856D-52B61BA6EFE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwiEncode", "Apps\SwiEncode\SwiEncode.csproj", "{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{8C586BBE-0032-4291-BB5E-1AD8E06CC88A}"
+	ProjectSection(SolutionItems) = preProject
+		Images\Female_200x250_RGB.png = Images\Female_200x250_RGB.png
+		Images\Female_200x250_RGB.wi = Images\Female_200x250_RGB.wi
+		Images\Female_200x250_RGB_decoded.png = Images\Female_200x250_RGB_decoded.png
+		Images\Male_100x125_GRY.png = Images\Male_100x125_GRY.png
+		Images\Male_100x125_GRY.wi = Images\Male_100x125_GRY.wi
+		Images\Male_100x125_GRY_decoded.png = Images\Male_100x125_GRY_decoded.png
+		Images\Male_200x250_GRY.png = Images\Male_200x250_GRY.png
+		Images\Male_200x250_GRY.wi = Images\Male_200x250_GRY.wi
+		Images\Male_200x250_GRY_decoded.png = Images\Male_200x250_GRY_decoded.png
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwiDecode", "Apps\SwiDecode\SwiDecode.csproj", "{32C610EC-45BF-4550-9310-8CF5B4B93A51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F249B60-FA60-4E0F-9352-9512F8CB5F0A}.Debug|x86.ActiveCfg = Debug|x86
+		{1F249B60-FA60-4E0F-9352-9512F8CB5F0A}.Debug|x86.Build.0 = Debug|x86
+		{1F249B60-FA60-4E0F-9352-9512F8CB5F0A}.Release|x86.ActiveCfg = Release|x86
+		{1F249B60-FA60-4E0F-9352-9512F8CB5F0A}.Release|x86.Build.0 = Release|x86
+		{51314BCF-C1E1-44D3-8D82-C80638F45A9E}.Debug|x86.ActiveCfg = Debug|x86
+		{51314BCF-C1E1-44D3-8D82-C80638F45A9E}.Debug|x86.Build.0 = Debug|x86
+		{51314BCF-C1E1-44D3-8D82-C80638F45A9E}.Release|x86.ActiveCfg = Release|x86
+		{51314BCF-C1E1-44D3-8D82-C80638F45A9E}.Release|x86.Build.0 = Release|x86
+		{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC}.Debug|x86.ActiveCfg = Debug|x86
+		{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC}.Debug|x86.Build.0 = Debug|x86
+		{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC}.Release|x86.ActiveCfg = Release|x86
+		{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC}.Release|x86.Build.0 = Release|x86
+		{32C610EC-45BF-4550-9310-8CF5B4B93A51}.Debug|x86.ActiveCfg = Debug|x86
+		{32C610EC-45BF-4550-9310-8CF5B4B93A51}.Debug|x86.Build.0 = Debug|x86
+		{32C610EC-45BF-4550-9310-8CF5B4B93A51}.Release|x86.ActiveCfg = Release|x86
+		{32C610EC-45BF-4550-9310-8CF5B4B93A51}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1F249B60-FA60-4E0F-9352-9512F8CB5F0A} = {252CB774-213F-4E70-A275-C41FC286EDC1}
+		{51314BCF-C1E1-44D3-8D82-C80638F45A9E} = {252CB774-213F-4E70-A275-C41FC286EDC1}
+		{59E5A4A0-DAB0-44FA-B8DC-BD9847791CAC} = {31A02DDA-1DDA-48E8-856D-52B61BA6EFE2}
+		{32C610EC-45BF-4550-9310-8CF5B4B93A51} = {31A02DDA-1DDA-48E8-856D-52B61BA6EFE2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6384C556-4A69-440C-B437-CCF398271A35}
+	EndGlobalSection
+EndGlobal
