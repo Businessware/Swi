@@ -29,7 +29,7 @@ The project is a Visual Studio solution with the following C# projects:
 ### Observations (so far!)
 * The codec works for encoding/decoding known images.
 * The codec does not appear to work when decoding the SADL embedded WI image. In this case the following is observed:
-*     The method WiDecompressSubImage 
+    The method WiDecompressSubImage 
 
 
 
