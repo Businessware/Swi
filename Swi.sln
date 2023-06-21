@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{8C586B
 		Images\Male_200x250_GRY.png = Images\Male_200x250_GRY.png
 		Images\Male_200x250_GRY.wi = Images\Male_200x250_GRY.wi
 		Images\Male_200x250_GRY_decoded.png = Images\Male_200x250_GRY_decoded.png
+		Images\wjf.wi.bin = Images\wjf.wi.bin
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwiDecode", "Apps\SwiDecode\SwiDecode.csproj", "{32C610EC-45BF-4550-9310-8CF5B4B93A51}"

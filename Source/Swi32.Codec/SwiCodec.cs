@@ -105,13 +105,13 @@ namespace Swi32.Codec
             cmpImage->CmpData = (byte*)cmpDataPtr;
 
             // Step 3:  set decompressor options
-
+            
             decmpOpts->Smoothing = 0;              // do not use wavelet smoothing
             decmpOpts->Fast = 0;                   // do not use fast decompression method
             decmpOpts->ReadNextByte = IntPtr.Zero; // do not use user defined bitstream I/0
             decmpOpts->ReadParam = null;           // do not use free variable
             decmpOpts->Sharpening = 1;             // wavelet sharpen image
-
+            
             // Step 4:  decompress image
 
             int errorCode = SwiInterop.WiBeginDecompress(decmpOpts, rawImage, cmpImage);
@@ -127,8 +127,6 @@ namespace Swi32.Codec
             }
 
             // Step 5: create output image
-
-            errorCode = 0;
 
             if (errorCode == 0)
             {
