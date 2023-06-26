@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using Swi32.Codec;
 
-namespace SwiEncode
+namespace SwiDecode
 {
     internal class Program
     {
@@ -44,71 +44,75 @@ namespace SwiEncode
                 new PbmEncoder() { ColorType = PbmColorType.Grayscale });
         }
 
-        private static Task Decode(FileInfo swiFile, FileInfo imgFile)
+        private static Task Decode(FileInfo swiFile, FileInfo imgFile, bool oldDecoder)
         {
             return Task.Run(async () =>
             {
-                try
+                byte[] encoded = File.ReadAllBytes(swiFile.FullName);
+
+                int errorCode = 0;
+                byte[] pixels = null;
+                int width = 0;
+                int height = 0;
+                int bitsPerPixel = 0;
+
+                if (!oldDecoder)
                 {
-                    byte[] encoded = File.ReadAllBytes(swiFile.FullName);
+                    errorCode = SwiCodec.WiToRaw(encoded, out pixels,
+                        out width, out height, out bitsPerPixel);
+                }
+                else
+                {
+                    errorCode = SwiCodec.SiToRaw(encoded, out pixels,
+                        out width, out height, out bitsPerPixel);
+                }
 
-                    int errorCode = SwiCodec.ToRaw(encoded,
-                        out byte[] pixels, out int width, out int height, out int bitsPerPixel);
+                if (errorCode != 0)
+                {
+                    throw new InvalidOperationException(
+                        $"{(oldDecoder ? "SI" : "WI")} decode failed: Error={errorCode}");
+                }
 
-                    if (errorCode != 0)
-                    {
-                        throw new InvalidOperationException(
-                            $"WI decode failed: Error={errorCode}");
-                    }
+                string fileExt = Path.GetExtension(imgFile.Name).Substring(1).ToLower();
 
-                    string fileExt = Path.GetExtension(imgFile.Name).Substring(1).ToLower();
+                IImageFormat format = null;
+                IImageEncoder encoder = null;
+                Image image = null;
 
-                    IImageFormat format = null;
-                    IImageEncoder encoder = null;
-                    Image image = null;
-
-                    if (bitsPerPixel == 8)
-                    {
-                        image = Image.LoadPixelData<L8>(pixels, width, height);
-                        format = grayFormatMgr.FindFormatByFileExtension(fileExt)
-                            ??
-                            throw new NotSupportedException(
-                                "Unsupported grayscale image format type");
-                        encoder = grayFormatMgr.FindEncoder(format)
-                            ??
-                            throw new NotSupportedException(
-                                "Unsupported grayscale image encoder");
-                    }
-                    else if (bitsPerPixel == 24)
-                    {
-                        image = Image.LoadPixelData<Rgb24>(pixels, width, height);
-                        format = rgbFormatMgr.FindFormatByFileExtension(fileExt)
-                            ??
-                            throw new NotSupportedException("Unsupported RGB image format type");
-                        encoder = rgbFormatMgr.FindEncoder(format)
-                            ??
-                            throw new NotSupportedException("Unsupported RGB image encoder");
-                    }
-                    else
-                    {
+                if (bitsPerPixel == 8)
+                {
+                    image = Image.LoadPixelData<L8>(pixels, width, height);
+                    format = grayFormatMgr.FindFormatByFileExtension(fileExt)
+                        ??
                         throw new NotSupportedException(
-                            "Only 8, 24 bits-per-pixel images supported");
-                    }
-
-                    if (!imgFile.Directory.Exists)
-                    {
-                        imgFile.Directory.Create();
-                    }
-
-                    await image.SaveAsync(imgFile.FullName, encoder);
-
-                    Console.WriteLine($"Decoding completed, created file:\n  {imgFile.FullName}");
-
+                            "Unsupported grayscale image format type");
+                    encoder = grayFormatMgr.FindEncoder(format)
+                        ??
+                        throw new NotSupportedException(
+                            "Unsupported grayscale image encoder");
                 }
-                catch (Exception ex)
+                else if (bitsPerPixel == 24)
                 {
-                    Console.WriteLine($"Exception:\n  {ex.Message}");
+                    image = Image.LoadPixelData<Rgb24>(pixels, width, height);
+                    format = rgbFormatMgr.FindFormatByFileExtension(fileExt)
+                        ??
+                        throw new NotSupportedException("Unsupported RGB image format type");
+                    encoder = rgbFormatMgr.FindEncoder(format)
+                        ??
+                        throw new NotSupportedException("Unsupported RGB image encoder");
                 }
+                else
+                {
+                    throw new NotSupportedException(
+                        "Only 8, 24 bits-per-pixel images supported");
+                }
+
+                if (!imgFile.Directory.Exists)
+                {
+                    imgFile.Directory.Create();
+                }
+
+                await image.SaveAsync(imgFile.FullName, encoder);
             });
         }
 
@@ -154,16 +158,31 @@ namespace SwiEncode
                 IsRequired = true
             };
 
+            Option<bool> oldOption = new Option<bool>(
+                name: "--old",
+                description:
+                    "If 'true', the old decoding method is used.\n" +
+                    "If 'false', or omitted, the new method is used.");
+
             RootCommand rootCommand = new RootCommand("Convert image file to Summus WI format");
 
             rootCommand.AddOption(swiFileOption);
             rootCommand.AddOption(imgFileOption);
+            rootCommand.AddOption(oldOption);
 
-            rootCommand.SetHandler(async (imgFile, swiFile) =>
+            rootCommand.SetHandler(async (swiFile, imgFile, oldDecoder) =>
             {
-                await Decode(imgFile, swiFile);
+                try
+                {
+                    await Decode(swiFile, imgFile, oldDecoder);
+                    Console.WriteLine($"Decoding completed, created file:\n  {imgFile.FullName}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception:\n  {ex.Message}");
+                }
             },
-            swiFileOption, imgFileOption);
+            swiFileOption, imgFileOption, oldOption);
 
             return await rootCommand.InvokeAsync(args);
         }

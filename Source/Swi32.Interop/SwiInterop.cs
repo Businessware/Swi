@@ -205,7 +205,7 @@ namespace Swi32.Interop
             /// int
             public int BitsPerPixel;
             /// int
-            public int color;
+            public int Color;
             /// int
             public int LevelHeight;
             /// int
@@ -220,7 +220,7 @@ namespace Swi32.Interop
             /// unsigned char*
             public byte* CmpData;
             /// int
-            public int size;
+            public int Size;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -239,7 +239,7 @@ namespace Swi32.Interop
             /// int
             public int Progressive;
             /// ByteIOFunc
-            public ByteIOFunc WriteNextByte;
+            public IntPtr WriteNextByte;
             /// void*
             public void* WriteParam;
             /// int
@@ -264,13 +264,13 @@ namespace Swi32.Interop
             /// int
             public int Fast;
             /// ByteIOFunc
-            public ByteIOFunc ReadNextByte;
+            public IntPtr ReadNextByte;
             /// void*
             public void* ReadParam;
             /// int
             public int Sharpening;
             /// ScanlineIOFunc
-            public ScanlineIOFunc WriteScanline;
+            public IntPtr WriteScanline;
             /// void*
             public void* WriteScanlineParam;
         }
@@ -319,5 +319,22 @@ namespace Swi32.Interop
 
         [DllImport("swi32.dll", EntryPoint = "WiEndDecompress", CallingConvention = CallingConvention.StdCall)]
         public static extern unsafe void WiEndDecompress(WiDecmpOptions* decmpOptions, WiRawImage* rawImage, WiCmpImage* cmpImage);
+
+        // Obsolete functions
+
+        [DllImport("swi32.dll", EntryPoint = "SiCompress", CallingConvention = CallingConvention.StdCall)]
+        public static extern unsafe int SiCompress(SiImageInfo* imageInfo, SiCmpOption* cmpOption, SiCmpDataInfo* cmpDataInfo);
+
+        [DllImport("swi32.dll", EntryPoint = "SiDecompress", CallingConvention = CallingConvention.StdCall)]
+        public static extern unsafe int SiDecompress(SiCmpDataInfo* cmpDataInfo, SiDecmpOption* decmpOption, SiImageInfo* imageInfo);
+
+        [DllImport("swi32.dll", EntryPoint = "SiGetImageInfo", CallingConvention = CallingConvention.StdCall)]
+        public static extern unsafe int SiGetImageInfo(SiImageInfo* imageInfo);
+
+        [DllImport("swi32.dll", EntryPoint = "SiFreeImageInfo", CallingConvention = CallingConvention.StdCall)]
+        public static extern unsafe void SiFreeImageInfo(SiImageInfo* imageInfo);
+
+        [DllImport("swi32.dll", EntryPoint = "SiFreeCmpDataInfo", CallingConvention = CallingConvention.StdCall)]
+        public static extern unsafe void SiFreeCmpDataInfo(SiCmpDataInfo* cmpDataInfo);
     }
 }

@@ -29,7 +29,18 @@ namespace SwiEncode
             formatMgr.AddImageFormat(PbmFormat.Instance);
         }
 
-        private static Task Encode(FileInfo imgFile, FileInfo swiFile)
+        private static string GetOutputFilePath(FileInfo imgFile, FileInfo swiFile)
+        {
+            string outFolderPath = swiFile != null ? swiFile.DirectoryName : imgFile.DirectoryName;
+
+            string outFileName = swiFile != null
+                ? swiFile.Name
+                : $"{Path.GetFileNameWithoutExtension(imgFile.Name)}.wi";
+
+           return Path.Combine(outFolderPath, outFileName);
+        }
+
+        private static Task Encode(FileInfo imgFile, FileInfo swiFile, bool oldEncoder)
         {
             return Task.Run(async () =>
             {
@@ -68,31 +79,27 @@ namespace SwiEncode
                             "Only 8, 24 bits-per-pixel images supported");
                     }
 
-                    int errorCode = SwiCodec.FromRaw(pixels, ImageInfo.Width, ImageInfo.Height,
-                        ImageInfo.PixelType.BitsPerPixel, out byte[] encoded);
+                    int errorCode = 0;
+                    byte[] encoded = null;
+
+                    if (!oldEncoder)
+                    {
+                        errorCode = SwiCodec.WiFromRaw(pixels, ImageInfo.Width, ImageInfo.Height,
+                            ImageInfo.PixelType.BitsPerPixel, out encoded);
+                    }
+                    else
+                    {
+                        errorCode = SwiCodec.SiFromRaw(pixels, ImageInfo.Width, ImageInfo.Height,
+                            ImageInfo.PixelType.BitsPerPixel, out encoded);
+                    }
 
                     if (errorCode != 0)
                     {
                         throw new InvalidOperationException(
-                            $"WI encode failed: Error={errorCode}");
+                            $"{(oldEncoder ? "SI" : "WI")} encode failed: Error={errorCode}");
                     }
 
-                    string outFolderPath = swiFile != null ? swiFile.DirectoryName : imgFile.DirectoryName;
-
-                    string outFileName = swiFile != null
-                        ? swiFile.Name
-                        : $"{Path.GetFileNameWithoutExtension(imgFile.Name)}.wi";
-
-                    string outFilePath = Path.Combine(outFolderPath, outFileName);
-
-                    File.WriteAllBytes(outFilePath, encoded);
-
-                    Console.WriteLine($"Encoding completed, created file:\n  {outFilePath}");
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Exception:\n  {ex.Message}");
+                    File.WriteAllBytes(GetOutputFilePath(imgFile, swiFile), encoded);
                 }
                 finally
                 {
@@ -141,16 +148,33 @@ namespace SwiEncode
                     "If not provided will use same file folder " +
                     "and file name with '.wi' extension.");
 
+            Option<bool> oldOption = new Option<bool>(
+                name: "--old",
+                description:
+                    "If 'true', the old encoding method is used.\n" +
+                    "If 'false', or omitted, the new method is used.");
+
             RootCommand rootCommand = new RootCommand("Convert image file to Summus WI format");
 
             rootCommand.AddOption(imgFileOption);
             rootCommand.AddOption(swiFileOption);
+            rootCommand.AddOption(oldOption);
 
-            rootCommand.SetHandler(async (imgFile, swiFile) =>
+            rootCommand.SetHandler(async (imgFile, swiFile, oldEncoder) =>
             {
-                await Encode(imgFile, swiFile);
+                try
+                {
+                    await Encode(imgFile, swiFile, oldEncoder);
+                    Console.WriteLine(
+                        "Encoding completed, created file:\n" +
+                        $"{GetOutputFilePath(imgFile, swiFile)}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception:\n  {ex.Message}");
+                }
             },
-            imgFileOption, swiFileOption);
+            imgFileOption, swiFileOption, oldOption);
 
             return await rootCommand.InvokeAsync(args);
         }
